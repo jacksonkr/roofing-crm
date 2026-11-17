@@ -2,6 +2,8 @@
 
 **Live runtime:** https://tb4l7kn2kahnystt4xxhil43zu0wdxxa.lambda-url.us-east-2.on.aws/ (AWS Lambda in us-east-2, public, no login)
 
+**Demo video:** https://github.com/jacksonkr/roofing-crm/releases/download/demo-video-2026-11-17/roofing-crm-demo.mp4 (3 min 21 s; on-screen captions, no narration; recorded by script against the live site on 2026-11-17)
+
 The assignment is in [`README.md`](./README.md). This file explains what was built, how to
 check it, and where it falls short.
 
