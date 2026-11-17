@@ -92,7 +92,9 @@ npx cdk bootstrap          # once per account and Region
 npx cdk deploy             # prints the public URL
 ```
 
-Nothing runs while idle. The table bills per request.
+The table bills per request. The only thing that runs while idle is a five-minute schedule that
+keeps two function instances ready, so a visitor does not wait for a cold start; it stays well
+inside Lambda's free allowance, and setting `keepWarmInstances` to 0 in `infra/bin/app.ts` removes it.
 
 ## Known limits
 
@@ -113,7 +115,9 @@ Nothing runs while idle. The table bills per request.
 ## Engineering standards followed
 
 TypeScript throughout, Zod for every input, the Vercel AI SDK for all model calls, AWS Lambda
-and DynamoDB in us-east-2 defined with CDK, and GitHub Actions for checks.
+and DynamoDB in us-east-2 defined with CDK, Vitest, and GitHub Actions for checks. Which
+team-kit rules were followed and which were not, with reasons, is in
+[`docs/kit-usage.md`](./docs/kit-usage.md).
 
 ## Repository layout
 

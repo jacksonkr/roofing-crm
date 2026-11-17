@@ -18,6 +18,7 @@ jobs:
       - run: npx next typegen
       - run: npx tsc --noEmit
       - run: npm run lint
+      - run: npm test
       - run: npm run build
 
   infra:
