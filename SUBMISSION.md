@@ -34,7 +34,7 @@ Browser ──▶ Lambda function (Next.js: pages + API)
 | Configurable search radius | Met: 0.1 to 25 miles | Lead finder |
 | Roofs older than a configurable threshold (default 15) | Met. Roof year comes from a completed roof permit where one exists, else year built; the basis is shown on every row | "Older roofs" list |
 | Open roofing permits, emphasising long-open ones | Met: longest open first, with a minimum-years-open filter | "Open roofing permits" list |
-| Permit status, age, contractor name, BBB rating | Met except BBB: status, open duration, contractor, licence number and Florida state licence standing are shown. **BBB ratings are not in the source data** and are shown as not available | Permit rows and property details |
+| Permit status, age, contractor name, BBB rating | Met except the BBB rating itself: status, open duration, contractor, licence number and Florida state licence standing are shown. **BBB ratings are not in the source data** (BBB's pages refuse automated requests). Where exactly one BBB profile has the contractor's name, the row links to that profile so the rating is one click away | Permit rows and property details |
 | Browsable list of candidates from the map filters | Met: both lists, plus markers on the map | Lead finder |
 | Create and manage CRM lead records | Met: add from either list or through the assistant; change status and priority, add notes, filter, remove. Stored in DynamoDB | Leads |
 | RAG-backed agent for natural-language queries | Met, with a note on what "RAG" means here: the assistant retrieves records by calling the pipeline's search tools and the CRM's lead tools, then answers from them and shows every record it retrieved. There is no vector index, because the questions are about structured records | Assistant |
@@ -96,9 +96,10 @@ Nothing runs while idle. The table bills per request.
 
 ## Known limits
 
-- **BBB ratings are not available.** The pipeline has no BBB source loaded, so the CRM shows
-  "not available" instead of a score. Florida state licence standing is shown in its place as
-  the contractor-quality signal.
+- **BBB ratings are not available.** BBB's profile pages refuse automated requests, so the
+  pipeline loads only which profiles exist. The CRM links a contractor to its BBB profile when
+  exactly one profile has its name (about 4 in 10 roofing contractors); this is a name match,
+  not a confirmed identity. Florida state licence standing is the contractor-quality signal.
 - **County permits only, from 2020.** Municipal building departments keep their own systems,
   so a permit can be at most about seven years old.
 - **"Open" is derived.** The county publishes no permit status. A permit is treated as open

@@ -295,7 +295,14 @@ export function Finder({ leads, onSaved }: { leads: Lead[]; onSaved: () => void 
                           </>
                         )}
                         {row.state_licence_found === false && row.contractor_number ? <> · not in the state licence file</> : null}
-                        {" · "}BBB rating: not available
+                        {" · "}
+                        {row.bbb_profile_url ? (
+                          <a href={String(row.bbb_profile_url)} target="_blank" rel="noreferrer" title="The one BBB profile whose name equals this contractor's. A name match, not a confirmed identity. The rating is on that page.">
+                            BBB profile
+                          </a>
+                        ) : (
+                          <>BBB: no profile matched</>
+                        )}
                       </div>
                     </div>
                     <div className="actions">
@@ -385,7 +392,14 @@ export function Finder({ leads, onSaved }: { leads: Lead[]; onSaved: () => void 
                       {permit.is_open ? ` · open ${yearsOpen(permit.days_since_issued)}` : ""}
                     </div>
                     <div className="facts">
-                      {permit.contractor_name ?? "No contractor printed"} {permit.contractor_number ?? ""} · BBB rating: not available
+                      {permit.contractor_name ?? "No contractor printed"} {permit.contractor_number ?? ""} ·{" "}
+                      {permit.bbb_profile_url ? (
+                        <a href={String(permit.bbb_profile_url)} target="_blank" rel="noreferrer" title="The one BBB profile whose name equals this contractor's. A name match, not a confirmed identity. The rating is on that page.">
+                          BBB profile
+                        </a>
+                      ) : (
+                        <>BBB: no profile matched</>
+                      )}
                     </div>
                     <div className="facts">{permit.description ?? permit.category ?? ""}</div>
                   </div>
