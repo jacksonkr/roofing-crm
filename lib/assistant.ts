@@ -20,13 +20,13 @@ import { ORACLE_MCP_URL } from "./oracle";
  */
 
 // Measured on the Gemini free tier: newer models time out or return "high demand".
-const MODELS = (process.env.AGENT_MODELS ?? "gemini-3.5-flash-lite,gemini-3.5-flash").split(",").map((m) => m.trim());
-// A healthy answer takes 4 to 20 seconds; a longer wait is a hung call, better abandoned and retried.
-const ATTEMPT_TIMEOUT_MS = 30_000;
+const MODELS = (process.env.AGENT_MODELS ?? "gemini-3.5-flash-lite,gemini-3-flash-preview,gemini-3.5-flash").split(",").map((m) => m.trim());
+// A healthy answer takes 4 to 25 seconds; a longer wait is a hung call, better abandoned for the next model.
+const ATTEMPT_TIMEOUT_MS = 40_000;
 /** The whole question must finish inside the function's 120 s limit. */
 const BUDGET_MS = 100_000;
-/** The free model tier often answers "high demand" or hangs for a few seconds, so the list of models is tried up to three times. */
-const ATTEMPTS = [...MODELS, ...MODELS, ...MODELS];
+/** The free model tier often answers "high demand" or hangs for a few seconds, so the list of models is tried up to twice, within the budget. */
+const ATTEMPTS = [...MODELS, ...MODELS];
 /** The Oracle tools the assistant may use. `query_sql` is left out: a sales assistant has no need for open SQL. */
 const ORACLE_TOOLS = ["find_place", "search_properties", "search_permits", "get_property"];
 
