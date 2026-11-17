@@ -24,9 +24,19 @@ const EXAMPLES = [
 function Prose({ text }: { text: string }) {
   return (
     <div style={{ whiteSpace: "pre-wrap" }}>
-      {text.split(/(\*\*[^*]+\*\*)/g).map((part, index) =>
-        part.startsWith("**") && part.endsWith("**") ? <b key={index}>{part.slice(2, -2)}</b> : <Fragment key={index}>{part.replaceAll("`", "")}</Fragment>,
-      )}
+      {text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\(https?:\/\/[^)\s]+\))/g).map((part, index) => {
+        if (part.startsWith("**") && part.endsWith("**")) return <b key={index}>{part.slice(2, -2)}</b>;
+        // A Markdown link, [label](https://...), becomes a real link. Only http(s) addresses are linked.
+        const link = /^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/.exec(part);
+        if (link) {
+          return (
+            <a key={index} href={link[2]} target="_blank" rel="noreferrer">
+              {link[1]}
+            </a>
+          );
+        }
+        return <Fragment key={index}>{part.replaceAll("`", "")}</Fragment>;
+      })}
     </div>
   );
 }
