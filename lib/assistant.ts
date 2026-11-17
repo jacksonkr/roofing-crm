@@ -21,11 +21,12 @@ import { ORACLE_MCP_URL } from "./oracle";
 
 // Measured on the Gemini free tier: newer models time out or return "high demand".
 const MODELS = (process.env.AGENT_MODELS ?? "gemini-3.5-flash-lite,gemini-3.5-flash").split(",").map((m) => m.trim());
-const ATTEMPT_TIMEOUT_MS = 50_000;
+// A healthy answer takes 4 to 20 seconds; a longer wait is a hung call, better abandoned and retried.
+const ATTEMPT_TIMEOUT_MS = 30_000;
 /** The whole question must finish inside the function's 120 s limit. */
 const BUDGET_MS = 100_000;
-/** The free model tier often answers "high demand" for a few seconds, so the list of models is tried twice. */
-const ATTEMPTS = [...MODELS, ...MODELS];
+/** The free model tier often answers "high demand" or hangs for a few seconds, so the list of models is tried up to three times. */
+const ATTEMPTS = [...MODELS, ...MODELS, ...MODELS];
 /** The Oracle tools the assistant may use. `query_sql` is left out: a sales assistant has no need for open SQL. */
 const ORACLE_TOOLS = ["find_place", "search_properties", "search_permits", "get_property"];
 
@@ -117,7 +118,7 @@ export async function ask(question: string, workspace: string): Promise<{ answer
     for (const [attempt, model] of ATTEMPTS.entries()) {
       const left = BUDGET_MS - (Date.now() - started);
       if (left < 5_000) break;
-      if (attempt === MODELS.length) await new Promise((resolve) => setTimeout(resolve, 2_500));
+      if (attempt > 0 && attempt % MODELS.length === 0) await new Promise((resolve) => setTimeout(resolve, 2_500));
       try {
         const result = await generateText({
           model: google(model),
