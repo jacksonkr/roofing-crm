@@ -47,7 +47,9 @@ export function Finder({ leads, onSaved }: { leads: Lead[]; onSaved: () => void 
   const layers = useRef<{ L: typeof import("leaflet"); results: LayerGroup; pin: Marker; ring: Circle } | null>(null);
 
   const [centre, setCentre] = useState(START);
-  const [miles, setMiles] = useState(1);
+  // Kept as typed text so the box can be cleared and retyped; the radius used is always 0.1 to 25 miles.
+  const [milesText, setMilesText] = useState("1");
+  const miles = Math.min(25, Math.max(0.1, Number(milesText) || 1));
   const [minRoofAge, setMinRoofAge] = useState(15);
   const [minYearsOpen, setMinYearsOpen] = useState(0);
   const [ownerAway, setOwnerAway] = useState(false);
@@ -189,7 +191,7 @@ export function Finder({ leads, onSaved }: { leads: Lead[]; onSaved: () => void 
         <button onClick={useMyLocation}>Use my location</button>
         <label>
           Radius (miles)
-          <input type="number" min={0.1} max={25} step={0.1} value={miles} onChange={(e) => setMiles(Number(e.target.value) || 1)} />
+          <input type="number" min={0.1} max={25} step={0.1} value={milesText} onChange={(e) => setMilesText(e.target.value)} onBlur={() => setMilesText(String(miles))} />
         </label>
         <label>
           Roof older than (years)

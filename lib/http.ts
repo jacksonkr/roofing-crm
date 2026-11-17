@@ -6,7 +6,7 @@ export async function respond(handler: () => Promise<unknown>, okStatus = 200): 
   try {
     return Response.json(await handler(), { status: okStatus });
   } catch (error) {
-    if (error instanceof ZodError) return Response.json({ error: "Invalid input", issues: error.issues }, { status: 400 });
+    if (error instanceof ZodError) return Response.json({ error: error.issues[0]?.message ?? "Invalid input", issues: error.issues }, { status: 400 });
     if (error instanceof NotFound) return Response.json({ error: error.message }, { status: 404 });
     console.error(error);
     return Response.json({ error: error instanceof Error ? error.message : "Request failed" }, { status: 500 });
